@@ -1,0 +1,28 @@
+{
+	"info": {
+		"_postman_id": "d87aaa9d-06c4-4e35-a76e-977ea6b66307",
+		"name": "Users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16886773"
+	},
+	"item": [
+		{
+			"name": "POST /api/users/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/auth",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
