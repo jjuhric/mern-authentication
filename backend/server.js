@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
+import connectDB from './config/db.js';
+
+connectDB();
 
 const PORT = process.env.PORT || 5000;
 
