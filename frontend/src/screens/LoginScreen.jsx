@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, Spinner } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../slices/authSlice';
 import { useLoginMutation } from '../slices/usersApiSlice';
+import { toast } from 'react-toastify';
 
 
 const Login = () => {
@@ -32,7 +33,7 @@ const Login = () => {
             dispatch(setCredentials({ ...res }));
             navigate('/');
         } catch (err) {
-            console.log(err?.data?.message || err.error);
+            toast.error(err?.data?.message || err?.message);
         }
 
     };
@@ -49,7 +50,7 @@ const Login = () => {
                     <Form.Label>Password</Form.Label>
                     <Form.Control type="password" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
                 </Form.Group>
-                <Button type="submit" variant="primary" className="my-2">Sign In</Button>
+                <Button type="submit" variant="primary" className="my-2">{isLoading ? <Spinner animation="border" role="status" /> : "Sign In"}</Button>
                 <Row className="py-3">
                     <Col>
                         New Customer? <Link to="/register">Register</Link>

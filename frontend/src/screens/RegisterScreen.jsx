@@ -1,26 +1,55 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
+import { toast } from 'react-toastify';
+import { Spinner } from 'react-bootstrap';
+import { useRegisterMutation } from '../slices/usersApiSlice';
+import { setCredentials } from '../slices/authSlice';
 
 const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [register, { isLoading }] = useRegisterMutation();
 
-    const submitHandler = (e) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { userInfo } = useSelector(state => state.auth);
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate('/');
+        }
+    }, [navigate, userInfo]);
+
+
+    const submitHandler = async (e) => {
         e.preventDefault();
-        console.log("Submit");
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match');
+            return;
+        }
+
+        try {
+            const res = await register({ name, email, password }).unwrap();
+            dispatch(setCredentials({ ...res }));
+            navigate('/');
+        } catch (err) {
+            toast.error(err?.data?.message || err?.message);
+        }
+
     };
 
     return (
         <FormContainer>
             <h1>Register</h1>
-            <Form onAbort={submitHandler}>
+            <Form onSubmit={submitHandler}>
                 <Form.Group className="my-2" controlId="name">
                     <Form.Label>Name</Form.Label>
-                    <Form.Control type="email" placeholder="Enter name" value={name} onChange={(e) => setName(e.target.value)}></Form.Control>
+                    <Form.Control type="text" placeholder="Enter name" value={name} onChange={(e) => setName(e.target.value)}></Form.Control>
                 </Form.Group>
 
                 <Form.Group className="my-2" controlId="email">
@@ -38,7 +67,7 @@ const Register = () => {
                     <Form.Control type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}></Form.Control>
                 </Form.Group>
 
-                <Button type="submit" variant="primary" className="my-2">Sign In</Button>
+                <Button type="submit" variant="primary" className="my-2">{isLoading ? <Spinner animation="border" role="status" /> : "Register"}</Button>
 
                 <Row className="py-3">
                     <Col>
