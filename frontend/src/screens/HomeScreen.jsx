@@ -1,5 +1,5 @@
 import Hero from "../components/Hero"
 
-const HomeScreen = () => <Hero />
+const Home = () => <Hero />
 
-export default HomeScreen
+export default Home
