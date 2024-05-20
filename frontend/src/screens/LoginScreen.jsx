@@ -1,21 +1,46 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+/* eslint-disable no-unused-vars */
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCredentials } from '../slices/authSlice';
+import { useLoginMutation } from '../slices/usersApiSlice';
+
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [login, { isLoading }] = useLoginMutation();
+    const { userInfo } = useSelector(state => state.auth);
 
-    const submitHandler = (e) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate('/');
+        }
+    }, [navigate, userInfo])
+
+
+    const submitHandler = async (e) => {
         e.preventDefault();
-        console.log("Submit");
+        try {
+            const res = await login({ email, password }).unwrap();
+            dispatch(setCredentials({ ...res }));
+            navigate('/');
+        } catch (err) {
+            console.log(err?.data?.message || err.error);
+        }
+
     };
 
     return (
         <FormContainer>
             <h1>Sign In</h1>
-            <Form onAbort={submitHandler}>
+            <Form onSubmit={submitHandler}>
                 <Form.Group className="my-2" controlId="email">
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)}></Form.Control>
